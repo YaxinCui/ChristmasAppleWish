@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-bounce-short: bounce-short 0.5s infinite;
+  --animate-wiggle: wiggle 1s ease-in-out infinite;
+  --animate-grow: grow 3s ease-out forwards;
+  --animate-float: float 3s ease-in-out infinite;
+
+  @keyframes bounce-short {
+    0%, 100% { transform: translateY(-5%); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
+    50% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+  @keyframes grow {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+}
