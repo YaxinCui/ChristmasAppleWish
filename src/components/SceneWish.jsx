@@ -5,6 +5,7 @@ import confetti from 'canvas-confetti';
 export default function SceneWish({ onSubmit }) {
   const [text, setText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [saveStatus, setSaveStatus] = useState(''); // '' | 'ok' | 'fail'
 
   const suggestions = useMemo(
     () => [
@@ -23,18 +24,22 @@ export default function SceneWish({ onSubmit }) {
     if (!text.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
+    setSaveStatus('');
     
     try {
       // 尝试发送到本地服务
-      await fetch('/api/wish', {
+      const resp = await fetch('/api/wish', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ wish: text }),
       });
+      if (!resp.ok) throw new Error(`save failed: ${resp.status}`);
+      setSaveStatus('ok');
     } catch (err) {
-      console.log('Backend not available, proceeding anyway');
+      console.log('Save failed (backend not available):', err);
+      setSaveStatus('fail');
     }
 
     // 提交瞬间的庆祝
@@ -100,6 +105,12 @@ export default function SceneWish({ onSubmit }) {
           >
             {isSubmitting ? '发送中...' : '封存愿望 ✨'}
           </motion.button>
+
+          {saveStatus === 'fail' && (
+            <div className="text-xs text-amber-200/90 bg-amber-500/10 border border-amber-200/20 rounded-xl px-3 py-2">
+              记录服务未启动或不可用：请在项目根目录运行 <span className="font-mono">node server.js</span>（本地才会写入 <span className="font-mono">wishes_data.txt</span>）。
+            </div>
+          )}
         </form>
       </div>
     </div>
